@@ -1,0 +1,11 @@
+.build/
+*.app
+*.dmg
+.DS_Store
+xcuserdata/
+*.xcworkspace
+xcshareddata/
+*.xcuserstate
+Packages/
+*.xcodeproj
+.swiftpm/
