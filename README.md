@@ -4,8 +4,6 @@ A native macOS menu bar app that downloads Google Earth satellite images and aut
 
 原生 macOS 菜单栏应用，每天自动下载 Google Earth 卫星图片并定时切换桌面壁纸。
 
-<img width="400" alt="screenshot" src="https://github.com/user-attachments/assets/placeholder" />
-
 ## Features / 功能
 
 - **Daily Fresh Wallpapers** — Downloads up to 15 new satellite images every day
