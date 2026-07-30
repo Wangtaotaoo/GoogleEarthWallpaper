@@ -24,6 +24,14 @@ A native macOS menu bar app that downloads Google Earth satellite images and aut
 - **多语言** — 自动根据系统语言显示中文或英文
 - **纯本地** — 所有数据存在本地，不发送任何信息
 
+## Screenshots / 截图
+
+<p align="center">
+  <img width="32%" alt="Menu" src="https://github.com/user-attachments/assets/31bda133-346e-46ec-86a2-c3ae1739c191" />
+  <img width="32%" alt="Settings" src="https://github.com/user-attachments/assets/348b7eec-3d0b-4268-9ae9-c67e38dab413" />
+  <img width="32%" alt="History" src="https://github.com/user-attachments/assets/21622383-01a8-4185-9239-e1d2377519f7" />
+</p>
+
 ## Requirements / 系统要求
 
 - macOS 14.0+
