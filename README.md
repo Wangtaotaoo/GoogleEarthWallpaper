@@ -41,20 +41,19 @@ A native macOS menu bar app that downloads Google Earth satellite images and aut
 
 ### Download / 下载
 
-1. Download `EarthWallpaper.zip` from [Releases](https://github.com/Wangtaotaoo/GoogleEarthWallpaper/releases)
-2. Unzip and drag `EarthWallpaper.app` to `Applications`
-3. Run in Terminal: `xattr -cr /Applications/EarthWallpaper.app`
-4. Open the app
+1. Download `EarthWallpaper.zip` from [Releases](https://github.com/Wangtaotaoo/GoogleEarthWallpaper/releases) and unzip
+2. Open **Terminal** and run:
+   ```bash
+   cd ~/Downloads/EarthWallpaper-release && bash install.sh
+   ```
 
 ---
 
-1. 从 [Releases](https://github.com/Wangtaotaoo/GoogleEarthWallpaper/releases) 下载 `EarthWallpaper.zip`
-2. 解压后把 `EarthWallpaper.app` 拖入 `Applications`
-3. 终端运行：`xattr -cr /Applications/EarthWallpaper.app`
-4. 打开应用
-
-> Or go to **System Settings → Privacy & Security** → "Open Anyway"
-> 或者打开 **系统设置 → 隐私与安全性** → "仍要打开"
+1. 从 [Releases](https://github.com/Wangtaotaoo/GoogleEarthWallpaper/releases) 下载 `EarthWallpaper.zip` 并解压
+2. 打开 **终端** 运行：
+   ```bash
+   cd ~/Downloads/EarthWallpaper-release && bash install.sh
+   ```
 
 ### Build from Source / 从源码编译
 
