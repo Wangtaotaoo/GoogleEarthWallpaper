@@ -3,23 +3,27 @@ set -e
 
 VERSION="${1:-1.0.0}"
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-BUILD_DIR="$PROJECT_DIR/.build/arm64-apple-macosx/release"
-APP_DIR="$PROJECT_DIR/EarthWallpaper.app"
-ZIP_PATH="$PROJECT_DIR/EarthWallpaper.zip"
-
-echo "=== Building release ==="
 cd "$PROJECT_DIR"
-swift build -c release
+
+echo "=== Building universal binary (arm64 + x86_64) ==="
+arch -arm64 swift build -c release --build-path .build/arm64
+arch -x86_64 swift build -c release --build-path .build/x86_64
+
+mkdir -p .build/universal
+lipo -create \
+  .build/arm64/release/EarthWallpaper \
+  .build/x86_64/release/EarthWallpaper \
+  -output .build/universal/EarthWallpaper
 
 echo "=== Creating .app bundle ==="
-rm -rf "$APP_DIR"
-mkdir -p "$APP_DIR/Contents/MacOS"
-mkdir -p "$APP_DIR/Contents/Resources"
+APP="EarthWallpaper.app"
+rm -rf "$APP"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-cp "$BUILD_DIR/EarthWallpaper" "$APP_DIR/Contents/MacOS/"
-cp -R "$BUILD_DIR/EarthWallpaper_EarthWallpaper.bundle" "$APP_DIR/Contents/Resources/"
+cp .build/universal/EarthWallpaper "$APP/Contents/MacOS/"
+cp .build/arm64/release/EarthWallpaper_EarthWallpaper.bundle/PhotoIDs.json "$APP/Contents/Resources/"
 
-cat > "$APP_DIR/Contents/Info.plist" << 'PLIST'
+cat > "$APP/Contents/Info.plist" << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -29,7 +33,7 @@ cat > "$APP_DIR/Contents/Info.plist" << 'PLIST'
     <key>CFBundleIdentifier</key>
     <string>com.earthwallpaper.app</string>
     <key>CFBundleName</key>
-    <string>EarthWallpaper</string>
+    <string>Google Earth Wallpaper</string>
     <key>CFBundleDisplayName</key>
     <string>Google Earth Wallpaper</string>
     <key>CFBundleVersion</key>
@@ -48,26 +52,36 @@ cat > "$APP_DIR/Contents/Info.plist" << 'PLIST'
 </plist>
 PLIST
 
-# Clean metadata
-xattr -cr "$APP_DIR"
-rm -rf "$APP_DIR/_CodeSignature" "$APP_DIR/Contents/_CodeSignature" 2>/dev/null
-find "$APP_DIR" -name "._*" -delete
-find "$APP_DIR" -name ".DS_Store" -delete
+codesign --force --deep --sign - "$APP"
 
-echo "=== Creating ZIP ==="
-rm -f "$ZIP_PATH"
-ditto -c -k --keepParent "$APP_DIR" "$ZIP_PATH"
+echo "=== Packaging ZIP ==="
+PUBLISH_DIR="/tmp/EarthWallpaper"
+rm -rf "$PUBLISH_DIR"
+mkdir -p "$PUBLISH_DIR"
+cp -R "$APP" "$PUBLISH_DIR/"
+cp scripts/install.sh "$PUBLISH_DIR/"
 
-echo "=== Pushing tag ==="
+ZIP="$PROJECT_DIR/EarthWallpaper.zip"
+rm -f "$ZIP"
+cd /tmp && ditto -c -k --keepParent EarthWallpaper "$ZIP"
 cd "$PROJECT_DIR"
-git tag "v$VERSION" -m "Release v$VERSION" 2>/dev/null || true
-git push origin "v$VERSION" 2>/dev/null || true
 
-echo "=== Creating GitHub Release ==="
+echo "=== Creating Release ==="
 gh release create "v$VERSION" \
     --title "Google Earth Wallpaper v$VERSION" \
-    --notes "See [README](https://github.com/Wangtaotaoo/GoogleEarthWallpaper) for installation instructions." \
-    "$ZIP_PATH"
+    --notes "## Install / 安装
+
+1. Download \`EarthWallpaper.zip\` and unzip
+2. Open **Terminal** and run:
+   \`\`\`bash
+   cd ~/Downloads/EarthWallpaper && bash install.sh
+   \`\`\`
+
+Supports Apple Silicon (M1/M2/M3/M4) and Intel Macs.  
+支持 Apple Silicon 和 Intel 芯片。
+
+macOS 14.0+ required." \
+    "$ZIP"
 
 echo "=== Done ==="
 echo "Release: https://github.com/Wangtaotaoo/GoogleEarthWallpaper/releases/tag/v$VERSION"

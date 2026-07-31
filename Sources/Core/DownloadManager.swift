@@ -116,7 +116,16 @@ final class DownloadManager: ObservableObject {
     // MARK: - Photo ID Management
 
     private func loadPhotoIDs() -> [String] {
-        guard let url = Bundle.module.url(forResource: "PhotoIDs", withExtension: "json"),
+        let url: URL?
+        // Prefer main bundle (packaged app), fall back to module (SPM run)
+        if let u = Bundle.main.url(forResource: "PhotoIDs", withExtension: "json") {
+            url = u
+        } else if let u = Bundle.module.url(forResource: "PhotoIDs", withExtension: "json") {
+            url = u
+        } else {
+            url = nil
+        }
+        guard let url = url,
               let data = try? Data(contentsOf: url),
               let ids = try? JSONDecoder().decode([String].self, from: data) else {
             return []
